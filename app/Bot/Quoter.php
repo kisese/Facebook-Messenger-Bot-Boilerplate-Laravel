@@ -29,14 +29,25 @@ class Quoter
     {
         $quote_data = Quote::all()->random(1)[0]->toArray();
 
+
+
         return new Quoter($quote_data);
     }
 
     public static function addQuickReply()
     {
         $quote_data = Quote::all()->random(1)[0]->toArray();
+
+        $quote = $quote_data["quote"];
+        //string filter
+        $str = str_replace("\n","",$quote);
+        $str1 = str_replace("\"","",$str);
+        $str2 = str_replace("+","",$str1);
+
+        $quote = $str2;
+
         return [
-            "text" => $quote_data["quote"]." \n- ".$quote_data["author"],
+            "text" => $quote." \n- ".$quote_data["author"],
             "quick_replies" => [
                 [
                     "content_type" => "text",
@@ -49,8 +60,17 @@ class Quoter
 
     public function toMessage()
     {
+
+        $quote = $this->quote;
+        //string filter
+        $str = str_replace("\n","",$quote);
+        $str1 = str_replace("\"","",$str);
+        $str2 = str_replace("+","",$str1);
+
+        $quote = $str2;
+
         //compose message
-        $text = htmlspecialchars_decode("$this->quote. \n- .$this->author", ENT_QUOTES | ENT_HTML5);
+        $text = htmlspecialchars_decode("$quote. \n- .$this->author", ENT_QUOTES | ENT_HTML5);
         Log::info(print_r($text, true));
 
         $response =  [
